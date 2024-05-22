@@ -1,3 +1,5 @@
+import { UserRole } from "@prisma/client";
+
 export type TRegisterUser = {
   name: string;
   contactNo: string;
@@ -12,6 +14,13 @@ export type TLoginUser = {
   password: string;
 };
 
+export type TChangePassword = {
+  oldPassword: string;
+  newPassword: string;
+};
+
 export type TJWTPayload = {
   id: string;
+  email: string;
+  role: UserRole;
 };

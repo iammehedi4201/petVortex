@@ -1,5 +1,6 @@
 import catchAsync from "../../../Shared/catchAynsc";
 import sendResponse from "../../../Shared/sendResponse";
+import { TJWTPayload } from "./auth.interface";
 import { authService } from "./auth.service";
 
 //! register user
@@ -30,6 +31,15 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+//! Change Password
+const changePassword = catchAsync(async (req, res) => {
+  const { user } = req;
+  const result = await authService.changePassword(
+    user as TJWTPayload,
+    req.body
+  );
+});
+
 //! Refresh Token
 // const refreshToken = catchAsync(async (req, res) => {
 //   const { refreshToken } = req.cookies;
@@ -45,4 +55,5 @@ const loginUser = catchAsync(async (req, res) => {
 export const authController = {
   registerUser,
   loginUser,
+  changePassword,
 };

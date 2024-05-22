@@ -2,6 +2,7 @@ import express from "express";
 import ValidateRequest from "../../middlewares/validateRequest";
 import { authValidation } from "./auth.validation";
 import { authController } from "./auth.controller";
+import checkAuth from "../../middlewares/checkAuth";
 
 const router = express.Router();
 
@@ -20,7 +21,12 @@ router.post(
 );
 
 //! Change Password route
-router.post();
+router.post(
+  "/change-password",
+  checkAuth("ADMIN", "USER"),
+  ValidateRequest(authValidation.changePasswordValidationSchema),
+  authController.changePassword
+);
 
 //! Refresh Token route
 // router.post("/refresh-token", authController.refreshToken);

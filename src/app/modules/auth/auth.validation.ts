@@ -24,7 +24,19 @@ const loginValidationSchema = z.object({
   }),
 });
 
+const changePasswordValidationSchema = z.object({
+  body: z
+    .object({
+      oldPassword: z.string(),
+      newPassword: z.string(),
+    })
+    .refine((data) => data.oldPassword !== data.newPassword, {
+      message: "Old password and new password should not be same",
+      path: ["newPassword"],
+    }),
+});
 export const authValidation = {
   registerValidationSchema,
   loginValidationSchema,
+  changePasswordValidationSchema,
 };

@@ -3,7 +3,12 @@ import prisma from "../../../Shared/prisma";
 import config from "../../../config/config";
 import AppError from "../../../helper/errorHelper/appError";
 import { generateToken, verifyToken } from "../../../helper/jwtHelper";
-import { TLoginUser, TRegisterUser } from "./auth.interface";
+import {
+  TChangePassword,
+  TJWTPayload,
+  TLoginUser,
+  TRegisterUser,
+} from "./auth.interface";
 
 //! Register user
 const registerUser = async (payLoad: TRegisterUser) => {
@@ -12,26 +17,38 @@ const registerUser = async (payLoad: TRegisterUser) => {
   //: hash password
   const hashedPassword = await bcypt.hash(password, Number(config.SaltRounds));
 
-  //: create user
-  const newUser = await prisma.user.create({
-    data: {
-      name,
-      contactNo,
-      userName,
-      email,
-      password: hashedPassword,
-    },
-    select: {
-      id: true,
-      name: true,
-      contactNo: true,
-      userName: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+  //: Create user data & password history data
+  const result = await prisma.$transaction(async (transactionClient) => {
+    //: create user
+    const newUser = await transactionClient.user.create({
+      data: {
+        name,
+        contactNo,
+        userName,
+        email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+        name: true,
+        contactNo: true,
+        userName: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    await transactionClient.passwordHistory.create({
+      data: {
+        userId: newUser?.id,
+        password: hashedPassword,
+      },
+    });
+    return newUser;
   });
-  return newUser;
+
+  return result;
 };
 
 //! login user
@@ -44,9 +61,11 @@ const loginUser = async (payLoad: TLoginUser) => {
       OR: [
         {
           userName,
+          status: "ACTIVE",
         },
         {
           email,
+          status: "ACTIVE",
         },
       ],
     },
@@ -65,6 +84,8 @@ const loginUser = async (payLoad: TLoginUser) => {
   //: Create Access Token
   const jwtPayload = {
     id: user.id,
+    email: user?.email,
+    role: user?.role,
   };
 
   const accessToken = generateToken(
@@ -90,6 +111,12 @@ const loginUser = async (payLoad: TLoginUser) => {
     refreshToken,
   };
 };
+
+//! Change Password
+const changePassword = async (
+  user: TJWTPayload,
+  payLoad: TChangePassword
+) => {};
 
 //! Refresh Token
 // const refreshToken = async (refreshToken: string) => {
@@ -131,4 +158,5 @@ const loginUser = async (payLoad: TLoginUser) => {
 export const authService = {
   registerUser,
   loginUser,
+  changePassword,
 };
