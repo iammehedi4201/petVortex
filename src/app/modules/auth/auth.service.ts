@@ -9,6 +9,7 @@ import {
   TLoginUser,
   TRegisterUser,
 } from "./auth.interface";
+import comparePasswordWithLastThreePasswords from "./auth.utils";
 
 //! Register user
 const registerUser = async (payLoad: TRegisterUser) => {
@@ -113,10 +114,77 @@ const loginUser = async (payLoad: TLoginUser) => {
 };
 
 //! Change Password
-const changePassword = async (
-  user: TJWTPayload,
-  payLoad: TChangePassword
-) => {};
+const changePassword = async (user: TJWTPayload, payLoad: TChangePassword) => {
+  const { id, email } = user;
+
+  //: check if user exists
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id,
+      status: "ACTIVE",
+    },
+  });
+
+  if (!userExists) {
+    throw new AppError("user not found", 404);
+  }
+
+  //: check if old password is correct
+  const isOldPasswordCorrect = await bcypt.compare(
+    payLoad.oldPassword,
+    userExists.password
+  );
+
+  if (!isOldPasswordCorrect) {
+    throw new AppError("incorrect old password", 400);
+  }
+
+  //: get last 3 password history
+  const passwordHistory = await prisma.passwordHistory.findMany({
+    where: {
+      userId: userExists.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 3,
+  });
+
+  console.log("passwordHistory", passwordHistory);
+
+  //: check if new password is in last three password and give date and time for last password change
+  await comparePasswordWithLastThreePasswords(
+    payLoad.newPassword,
+    passwordHistory
+  );
+
+  //: hash new password
+  const hashedPassword = await bcypt.hash(
+    payLoad.newPassword,
+    Number(config.SaltRounds)
+  );
+
+  const resutl = await prisma.$transaction(async (transactionClient) => {
+    //: update user password
+    await transactionClient.user.update({
+      where: {
+        id: userExists.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    //: save password history
+    await transactionClient.passwordHistory.create({
+      data: {
+        userId: userExists.id,
+        password: hashedPassword,
+      },
+    });
+  });
+  return resutl;
+};
 
 //! Refresh Token
 // const refreshToken = async (refreshToken: string) => {
