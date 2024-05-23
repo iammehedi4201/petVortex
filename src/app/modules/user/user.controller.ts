@@ -37,7 +37,8 @@ const updateUserProfile = catchAsync(async (req, res) => {
 //! Update user status
 const updateUserStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await userService.updateUserStatus(id, req.body);
+  const { status } = req.body;
+  const result = await userService.updateUserStatus(id, status);
   sendResponse(res, {
     success: true,
     statusCode: 200,
@@ -49,7 +50,8 @@ const updateUserStatus = catchAsync(async (req, res) => {
 //! Update user role
 const updateUserRole = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await userService.updateUserRole(id, req.body);
+  const { role } = req.body;
+  const result = await userService.updateUserRole(id, role);
   sendResponse(res, {
     success: true,
     statusCode: 200,

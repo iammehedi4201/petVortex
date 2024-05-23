@@ -60,6 +60,8 @@ const updateUserProfile = async (user: TJWTPayload, payLoad: Partial<User>) => {
 
 //! Update user status
 const updateUserStatus = async (id: string, status: UserStatus) => {
+  console.log(status);
+
   //:check if user exists
   const isUserExists = await prisma.user.findUnique({
     where: {
@@ -77,7 +79,15 @@ const updateUserStatus = async (id: string, status: UserStatus) => {
       id,
     },
     data: {
-      status: status,
+      status,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
   return updatedUserStatus;
@@ -86,12 +96,17 @@ const updateUserStatus = async (id: string, status: UserStatus) => {
 //! Update user role
 const updateUserRole = async (id: string, role: UserRole) => {
   //:check if user exists
+  console.log("id", id);
+
   const isUserExists = await prisma.user.findUnique({
     where: {
       id,
       status: "ACTIVE",
     },
   });
+
+  console.log("isUserExists", isUserExists);
+
   if (!isUserExists) {
     throw new AppError("User not found", 404);
   }
@@ -103,6 +118,14 @@ const updateUserRole = async (id: string, role: UserRole) => {
     },
     data: {
       role,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
   return updatedUserStatus;
