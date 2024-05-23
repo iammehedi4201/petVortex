@@ -1,4 +1,4 @@
-import { User, UserStatus } from "@prisma/client";
+import { User, UserRole, UserStatus } from "@prisma/client";
 import prisma from "../../../Shared/prisma";
 import AppError from "../../../helper/errorHelper/appError";
 import { TJWTPayload } from "../auth/auth.interface";
@@ -83,8 +83,34 @@ const updateUserStatus = async (id: string, status: UserStatus) => {
   return updatedUserStatus;
 };
 
+//! Update user role
+const updateUserRole = async (id: string, role: UserRole) => {
+  //:check if user exists
+  const isUserExists = await prisma.user.findUnique({
+    where: {
+      id,
+      status: "ACTIVE",
+    },
+  });
+  if (!isUserExists) {
+    throw new AppError("User not found", 404);
+  }
+
+  //:update user status
+  const updatedUserStatus = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      role,
+    },
+  });
+  return updatedUserStatus;
+};
+
 export const userService = {
   getUserProfileFromDB,
   updateUserProfile,
   updateUserStatus,
+  updateUserRole,
 };

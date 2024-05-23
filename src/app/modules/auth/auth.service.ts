@@ -13,7 +13,8 @@ import comparePasswordWithLastThreePasswords from "./auth.utils";
 
 //! Register user
 const registerUser = async (payLoad: TRegisterUser) => {
-  const { name, contactNo, userName, email, password } = payLoad;
+  const { name, contactNo, userName, email, password, profilePicture } =
+    payLoad;
 
   //: hash password
   const hashedPassword = await bcypt.hash(password, Number(config.SaltRounds));
@@ -28,6 +29,7 @@ const registerUser = async (payLoad: TRegisterUser) => {
         userName,
         email,
         password: hashedPassword,
+        profilePicture,
       },
       select: {
         id: true,

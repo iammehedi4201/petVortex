@@ -6,6 +6,7 @@ export type TRegisterUser = {
   userName: string;
   email: string;
   password: string;
+  profilePicture: string;
 };
 
 export type TLoginUser = {

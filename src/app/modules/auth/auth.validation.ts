@@ -9,6 +9,7 @@ const registerValidationSchema = z.object({
       email: z.string().email(),
       password: z.string(),
       confirmPassword: z.string(),
+      profilePicture: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "password and confirm password must be same",

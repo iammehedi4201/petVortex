@@ -1,7 +1,7 @@
 import express from "express";
 import checkAuth from "../../middlewares/checkAuth";
-import { userController } from "./user.controller";
 import ValidateRequest from "../../middlewares/validateRequest";
+import { userController } from "./user.controller";
 import { userValidation } from "./user.validation";
 
 const router = express.Router();
@@ -27,6 +27,14 @@ router.put(
   checkAuth("ADMIN"),
   ValidateRequest(userValidation.updateUserStatusValidationSchema),
   userController.updateUserStatus
+);
+
+//! Change User Role
+router.put(
+  "/role/:id",
+  checkAuth("ADMIN"),
+  ValidateRequest(userValidation.changeUserRoleValidationSchema),
+  userController.updateUserRole
 );
 
 export const userRoutes = router;

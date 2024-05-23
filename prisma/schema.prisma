@@ -47,6 +47,7 @@ model User {
   password        String
   role            UserRole          @default(USER)
   status          UserStatus        @default(ACTIVE)
+  profilePicture  String
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   AdoptionRequest AdoptionRequest[]
@@ -71,6 +72,7 @@ model Pet {
   speacialNeeds        String
   medicalHistory       String
   adoptionRequirements String
+  photo                String
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
   AdoptionRequest      AdoptionRequest[]

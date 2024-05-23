@@ -13,7 +13,14 @@ const updateUserStatusValidationSchema = z.object({
   }),
 });
 
+const changeUserRoleValidationSchema = z.object({
+  body: z.object({
+    role: z.enum(["ADMIN", "USER"]),
+  }),
+});
+
 export const userValidation = {
   updateUserProfileValidationSchema,
   updateUserStatusValidationSchema,
+  changeUserRoleValidationSchema,
 };
