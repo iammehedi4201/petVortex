@@ -5,6 +5,7 @@ export const petFilterAbleFields = [
   "size",
   "location",
   "searchTerm",
+  "gender",
 ];
 
-export const petSearchAbleFields = ["species", "breed", "location"];
+export const petSearchAbleFields = ["species", "breed", "location", "age"];

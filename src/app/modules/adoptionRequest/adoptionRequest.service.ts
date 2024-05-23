@@ -14,6 +14,7 @@ const createAdoptionRequestToDB = async (
   const pet = await prisma.pet.findUnique({
     where: {
       id: petId,
+      isDeleted: false,
     },
   });
 
@@ -66,8 +67,33 @@ const updateAdoptionRequestStatus = async (
   return updatedAdoptionRequest;
 };
 
+//! get Adoption Request by user
+const getAdoptionRequestByUser = async (user: TJWTPayload) => {
+  const { id, email } = user;
+  //: check if user exists
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id,
+      status: "ACTIVE",
+    },
+  });
+
+  if (!userExists) {
+    throw new AppError("User not found", 404);
+  }
+
+  const adoptionRequests = await prisma.adoptionRequest.findMany({
+    where: {
+      userId: id,
+    },
+  });
+
+  return adoptionRequests;
+};
+
 export const adoptionRequestService = {
   createAdoptionRequestToDB,
   getAdoptionRequestFromDB,
   updateAdoptionRequestStatus,
+  getAdoptionRequestByUser,
 };

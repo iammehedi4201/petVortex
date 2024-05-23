@@ -9,7 +9,7 @@ const router = express.Router();
 //! Create Adoption Request
 router.post(
   "/",
-  checkAuth(),
+  checkAuth("ADMIN", "USER"),
   ValidateRequest(
     adoptionRequestValidation.CreateAdoptionRequestValidationSchema
   ),
@@ -19,18 +19,25 @@ router.post(
 //! Get Adoption Request
 router.get(
   "/",
-  checkAuth(),
+  checkAuth("ADMIN"),
   adoptionRequestController.getAdoptionRequestFromDB
 );
 
 //! update Adoption Request status
 router.put(
   "/:requestId",
-  checkAuth(),
+  checkAuth("ADMIN"),
   ValidateRequest(
     adoptionRequestValidation.updateAdoptionRequestStatusValidationSchema
   ),
   adoptionRequestController.updateAdoptionRequestStatus
+);
+
+//! get Adoption Request by user
+router.get(
+  "/user",
+  checkAuth("ADMIN", "USER"),
+  adoptionRequestController.getAdoptionRequestByUser
 );
 
 export const adoptionRequestRoutes = router;

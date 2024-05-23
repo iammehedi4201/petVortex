@@ -8,17 +8,51 @@ const createFilterConditions = (filterOptions: Record<string, unknown>) => {
   //:filter options
   const { searchTerm, ...filterData } = filterOptions;
 
-  // Handling searchTerm
+  //: Handling searchTerm
   if (searchTerm) {
-    conditions.push({
-      OR: petSearchAbleFields.map((field) => ({
-        [field]: {
-          contains: searchTerm,
-          mode: "insensitive",
-        },
-      })),
+    const searchConditions = petSearchAbleFields.map((field) => {
+      if (field === "age") {
+        // Try to convert searchTerm to an integer
+        const parsedAge = parseInt(searchTerm as string);
+        if (!isNaN(parsedAge)) {
+          return { [field]: parsedAge };
+        }
+      } else {
+        // Perform a case-insensitive contains search for other fields
+        return { [field]: { contains: searchTerm, mode: "insensitive" } };
+      }
     });
+
+    if (searchConditions.length > 0) {
+      conditions.push({
+        OR: searchConditions as Prisma.PetWhereInput[],
+      });
+    }
   }
+
+  if (searchTerm) {
+    const searchConditions = petSearchAbleFields.map((field) => {
+      if (field === "age") {
+        const parseAge = parseInt(searchTerm as string);
+        if (!isNaN(parseAge)) {
+          return { [field]: parseAge };
+        }
+      } else {
+        return { [field]: { contains: searchTerm, mode: "insensitive" } };
+      }
+    });
+
+    if (searchConditions.length > 0) {
+      conditions.push({
+        OR: searchConditions as Prisma.PetWhereInput[],
+      });
+    }
+  }
+
+  //: check if isDeleted is false
+  conditions.push({
+    isDeleted: false,
+  });
 
   //:filter Data
   if (Object.keys(filterData).length > 0) {

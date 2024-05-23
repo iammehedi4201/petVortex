@@ -18,8 +18,8 @@ enum Status {
 
 //! gender Enum
 enum Gender {
-  male
-  female
+  MALE
+  FEMALE
 }
 
 //! UserRoles Enum
@@ -33,6 +33,13 @@ enum UserStatus {
   ACTIVE
   BLOCKED
   DELETED
+}
+
+//! HealthStatus Enum
+enum HealthStatus {
+  VACCINATED
+  SPAYED
+  NEUTERED
 }
 
 //* ---------------Models----------------- *//
@@ -68,14 +75,15 @@ model Pet {
   location             String
   description          String
   temperament          String
-  healthStatus         String
+  healthStatus         HealthStatus
   speacialNeeds        String
   medicalHistory       String
   adoptionRequirements String
-  photo                String
+  isDeleted            Boolean           @default(false)
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
   AdoptionRequest      AdoptionRequest[]
+  PetImages            PetImages[]
 }
 
 //! Adoption Request Model
@@ -106,4 +114,17 @@ model PasswordHistory {
   user User @relation(fields: [userId], references: [id])
 
   @@map("password_history")
+}
+
+//! Photo Model 
+model PetImages {
+  id        String   @id @default(uuid())
+  url       String
+  petId     String
+  pet       Pet      @relation(fields: [petId], references: [id])
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pet_images")
 }

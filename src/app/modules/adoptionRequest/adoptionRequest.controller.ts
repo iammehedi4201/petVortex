@@ -43,8 +43,21 @@ const updateAdoptionRequestStatus = catchAsync(async (req, res) => {
   });
 });
 
+//! get Adoption Request by user
+const getAdoptionRequestByUser = catchAsync(async (req, res) => {
+  const user = req.user;
+  const result = await adoptionRequestService.getAdoptionRequestByUser(user!);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Adoption requests retrieved successfully",
+    data: result,
+  });
+});
+
 export const adoptionRequestController = {
   createAdoptionRequestToDB,
   getAdoptionRequestFromDB,
   updateAdoptionRequestStatus,
+  getAdoptionRequestByUser,
 };

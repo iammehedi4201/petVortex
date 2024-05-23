@@ -42,8 +42,21 @@ const updatePetProfileById = catchAsync(async (req, res) => {
   });
 });
 
+//! delete pet by id
+const deletePetById = catchAsync(async (req, res) => {
+  const { petId } = req.params;
+  const result = await petService.deletePetById(petId);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Pet deleted successfully",
+    data: result,
+  });
+});
+
 export const petController = {
   createPetToDB,
   getAllPetsFromDB,
   updatePetProfileById,
+  deletePetById,
 };

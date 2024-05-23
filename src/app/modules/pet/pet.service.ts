@@ -1,18 +1,35 @@
-import { Pet, Prisma } from "@prisma/client";
+import { Pet } from "@prisma/client";
 import prisma from "../../../Shared/prisma";
-import { Toptions } from "../../interfaces/paginationAndSortOptions";
-import { petSearchAbleFields } from "./pet.constant";
+import AppError from "../../../helper/errorHelper/appError";
 import createFilterConditions from "../../../helper/filterHelper";
 import generatePaginationAndSortOptions from "../../../helper/paginationHelper";
-import AppError from "../../../helper/errorHelper/appError";
+import { Toptions } from "../../interfaces/paginationAndSortOptions";
+import { TPetPayload } from "./pet.interface";
 
 //! Create Pet To DB
-const createPetToDB = async (payLoad: Pet) => {
-  //: createPet
-  const newPet = await prisma.pet.create({
-    data: payLoad,
+const createPetToDB = async (payLoad: TPetPayload) => {
+  const { pet, images } = payLoad;
+  const result = await prisma.$transaction(async (transactionClient) => {
+    //: createPet
+    const newPet = await transactionClient.pet.create({
+      data: pet,
+    });
+
+    console.log("newPet", newPet);
+
+    //: createPetImages
+    const petImages = images.map((image) => ({
+      petId: newPet.id,
+      url: image,
+    }));
+
+    await transactionClient.petImages.createMany({
+      data: petImages,
+    });
+    return newPet;
   });
-  return newPet;
+
+  return result;
 };
 
 //! Get All Pets From DB
@@ -72,8 +89,49 @@ const updatePetProfileById = async (petId: string, payLoad: Partial<Pet>) => {
   return updatedPet;
 };
 
+const deletePetById = async (petId: string) => {
+  //:check if pet exists
+  const isPetExists = await prisma.pet.findUnique({
+    where: {
+      id: petId,
+      isDeleted: false,
+    },
+  });
+
+  if (!isPetExists) {
+    throw new AppError("Pet not found", 404);
+  }
+
+  const result = await prisma.$transaction(async (transactionClient) => {
+    //:deletePet
+    const deletePet = await transactionClient.pet.update({
+      where: {
+        id: petId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    //:deletePetImages
+    await transactionClient.petImages.updateMany({
+      where: {
+        id: petId,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    return deletePet;
+  });
+
+  return result;
+};
+
 export const petService = {
   createPetToDB,
   getAllPetsFromDB,
   updatePetProfileById,
+  deletePetById,
 };

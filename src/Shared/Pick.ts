@@ -8,6 +8,7 @@ const pick = <T extends Record<string, unknown>, k extends keyof T>(
       finalObj[key] = obj[key];
     }
   }
+
   return finalObj;
 };
 
