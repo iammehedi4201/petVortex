@@ -7,6 +7,13 @@ const updateUserProfileValidationSchema = z.object({
   }),
 });
 
+const updateUserStatusValidationSchema = z.object({
+  body: z.object({
+    status: z.enum(["ACTIVE", "BLOCKED", "DELETED"]),
+  }),
+});
+
 export const userValidation = {
   updateUserProfileValidationSchema,
+  updateUserStatusValidationSchema,
 };

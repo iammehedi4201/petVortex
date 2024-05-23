@@ -21,10 +21,11 @@ const getUserProfileFromDB = catchAsync(async (req, res) => {
 //! Update User Profile
 const updateUserProfile = catchAsync(async (req, res) => {
   const user = req.user;
+  const { status } = req.body;
   if (!user) {
     throw new AppError("User not found", 404);
   }
-  const result = await userService.updateUserProfile(user, req.body);
+  const result = await userService.updateUserProfile(user, status);
   sendResponse(res, {
     success: true,
     statusCode: 200,
@@ -33,7 +34,20 @@ const updateUserProfile = catchAsync(async (req, res) => {
   });
 });
 
+//! Update user status
+const updateUserStatus = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await userService.updateUserStatus(id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "User status updated successfully",
+    data: result,
+  });
+});
+
 export const userController = {
   getUserProfileFromDB,
   updateUserProfile,
+  updateUserStatus,
 };

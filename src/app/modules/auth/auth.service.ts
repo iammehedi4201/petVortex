@@ -56,16 +56,25 @@ const registerUser = async (payLoad: TRegisterUser) => {
 const loginUser = async (payLoad: TLoginUser) => {
   const { userName, email, password } = payLoad;
 
+  console.log("userName", userName);
+  console.log("email", email);
+  console.log("password", password);
+
   //: check if user exists
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
+      AND: [
         {
-          userName,
-          status: "ACTIVE",
+          OR: [
+            {
+              userName,
+            },
+            {
+              email,
+            },
+          ],
         },
         {
-          email,
           status: "ACTIVE",
         },
       ],
