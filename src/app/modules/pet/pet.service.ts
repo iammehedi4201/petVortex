@@ -45,6 +45,13 @@ const getAllPetsFromDB = async (
   //: getAllPets
   const allPets = await prisma.pet.findMany({
     where: conditions.length > 0 ? { AND: conditions } : {},
+    include: {
+      PetImages: {
+        select: {
+          url: true,
+        },
+      },
+    },
     take,
     skip,
     orderBy: {
@@ -65,6 +72,30 @@ const getAllPetsFromDB = async (
     },
     data: allPets,
   };
+};
+
+//! Get Pet By Id
+const getPetByIdFromDB = async (petId: string) => {
+  //: check if pet exists
+  const pet = await prisma.pet.findUnique({
+    where: {
+      id: petId,
+      isDeleted: false,
+    },
+    include: {
+      PetImages: {
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
+
+  if (!pet) {
+    throw new AppError("Pet not found", 404);
+  }
+
+  return pet;
 };
 
 //! Update Pet Profile By Id
@@ -132,6 +163,7 @@ const deletePetById = async (petId: string) => {
 export const petService = {
   createPetToDB,
   getAllPetsFromDB,
+  getPetByIdFromDB,
   updatePetProfileById,
   deletePetById,
 };

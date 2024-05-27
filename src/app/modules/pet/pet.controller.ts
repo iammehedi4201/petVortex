@@ -30,6 +30,18 @@ const getAllPetsFromDB = catchAsync(async (req, res) => {
   });
 });
 
+//! get pet by id
+const getPetByIdFromDB = catchAsync(async (req, res) => {
+  const { petId } = req.params;
+  const result = await petService.getPetByIdFromDB(petId);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Pet retrieved successfully",
+    data: result,
+  });
+});
+
 //! update pet profile by id
 const updatePetProfileById = catchAsync(async (req, res) => {
   const { petId } = req.params;
@@ -57,6 +69,7 @@ const deletePetById = catchAsync(async (req, res) => {
 export const petController = {
   createPetToDB,
   getAllPetsFromDB,
+  getPetByIdFromDB,
   updatePetProfileById,
   deletePetById,
 };

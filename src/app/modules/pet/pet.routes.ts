@@ -17,6 +17,9 @@ router.post(
 //! Get All Pets
 router.get("/", petController.getAllPetsFromDB);
 
+//! Get Pet By Id
+router.get("/:petId", petController.getPetByIdFromDB);
+
 //! Update Pet profile By Id
 router.put(
   "/:petId",
