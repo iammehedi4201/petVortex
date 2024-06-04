@@ -3,6 +3,26 @@ import prisma from "../../../Shared/prisma";
 import AppError from "../../../helper/errorHelper/appError";
 import { TJWTPayload } from "../auth/auth.interface";
 
+//:get all users
+const getAllUsers = async () => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      userName: true,
+      contactNo: true,
+      profilePicture: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return users;
+};
+
 //! Get user profile
 const getUserProfileFromDB = async (user: TJWTPayload) => {
   const { id } = user;
@@ -137,6 +157,7 @@ const updateUserRole = async (id: string, role: UserRole) => {
 };
 
 export const userService = {
+  getAllUsers,
   getUserProfileFromDB,
   updateUserProfile,
   updateUserStatus,

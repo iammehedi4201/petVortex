@@ -6,6 +6,9 @@ import { userValidation } from "./user.validation";
 
 const router = express.Router();
 
+//! get all users
+router.get("/", checkAuth("ADMIN"), userController.getAllUsers);
+
 //! Get User Profile
 router.get(
   "/profile",

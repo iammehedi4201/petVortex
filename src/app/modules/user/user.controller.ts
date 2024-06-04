@@ -3,6 +3,17 @@ import sendResponse from "../../../Shared/sendResponse";
 import AppError from "../../../helper/errorHelper/appError";
 import { userService } from "./user.service";
 
+//! Get all users
+const getAllUsers = catchAsync(async (req, res) => {
+  const users = await userService.getAllUsers();
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Users retrieved successfully",
+    data: users,
+  });
+});
+
 //! Get User Profile
 const getUserProfileFromDB = catchAsync(async (req, res) => {
   console.log("Hey I am here");
@@ -64,6 +75,7 @@ const updateUserRole = catchAsync(async (req, res) => {
 });
 
 export const userController = {
+  getAllUsers,
   getUserProfileFromDB,
   updateUserProfile,
   updateUserStatus,
