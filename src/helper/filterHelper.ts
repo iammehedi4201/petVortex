@@ -10,37 +10,22 @@ const createFilterConditions = (filterOptions: Record<string, unknown>) => {
 
   //: Handling searchTerm
   if (searchTerm) {
-    const searchConditions = petSearchAbleFields.map((field) => {
+    console.log("searchTerm", searchTerm);
+
+    const buildSearchCondition = (field: string, searchTerm: string) => {
       if (field === "age") {
-        // Try to convert searchTerm to an integer
-        const parsedAge = parseInt(searchTerm as string);
+        const parsedAge = parseInt(searchTerm);
         if (!isNaN(parsedAge)) {
           return { [field]: parsedAge };
         }
       } else {
-        // Perform a case-insensitive contains search for other fields
         return { [field]: { contains: searchTerm, mode: "insensitive" } };
       }
-    });
+    };
 
-    if (searchConditions.length > 0) {
-      conditions.push({
-        OR: searchConditions as Prisma.PetWhereInput[],
-      });
-    }
-  }
-
-  if (searchTerm) {
-    const searchConditions = petSearchAbleFields.map((field) => {
-      if (field === "age") {
-        const parseAge = parseInt(searchTerm as string);
-        if (!isNaN(parseAge)) {
-          return { [field]: parseAge };
-        }
-      } else {
-        return { [field]: { contains: searchTerm, mode: "insensitive" } };
-      }
-    });
+    const searchConditions = petSearchAbleFields
+      .map((field) => buildSearchCondition(field, searchTerm as string))
+      .filter(Boolean); // Remove any undefined entries
 
     if (searchConditions.length > 0) {
       conditions.push({

@@ -100,6 +100,8 @@ const getPetByIdFromDB = async (petId: string) => {
 
 //! Update Pet Profile By Id
 const updatePetProfileById = async (petId: string, payLoad: Partial<Pet>) => {
+  console.log("payLoad", payLoad);
+
   //:check if pet exists
   const pet = await prisma.pet.findUnique({
     where: {

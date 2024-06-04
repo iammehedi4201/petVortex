@@ -23,7 +23,7 @@ router.get("/:petId", petController.getPetByIdFromDB);
 //! Update Pet profile By Id
 router.put(
   "/:petId",
-  checkAuth(),
+  checkAuth("ADMIN"),
   ValidateRequest(petValidation.updatePetValidationSchema),
   petController.updatePetProfileById
 );

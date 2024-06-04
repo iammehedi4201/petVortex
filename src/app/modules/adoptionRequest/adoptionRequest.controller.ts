@@ -5,6 +5,7 @@ import { adoptionRequestService } from "./adoptionRequest.service";
 //! Create Adoption Request
 const createAdoptionRequestToDB = catchAsync(async (req, res) => {
   const user = req.user;
+  console.log("req.body", req.body);
   const result = await adoptionRequestService.createAdoptionRequestToDB(
     user!,
     req.body
@@ -31,6 +32,9 @@ const getAdoptionRequestFromDB = catchAsync(async (req, res) => {
 //! update Adoption Request status
 const updateAdoptionRequestStatus = catchAsync(async (req, res) => {
   const { requestId } = req.params;
+  console.log("req.body", req.body);
+  console.log("requestId", requestId);
+
   const result = await adoptionRequestService.updateAdoptionRequestStatus(
     requestId,
     req.body

@@ -35,7 +35,7 @@ const updatePetValidationSchema = z.object({
     adoptionRequirements: z.string().optional(),
     gender: z.enum(["MALE", "FEMALE"]).optional(),
     healthStatus: z.enum(["VACCINATED", "SPAYED", "NEUTERED"]).optional(),
-    speecialNeeds: z.string().optional(),
+    speacialNeeds: z.string().optional(),
   }),
 });
 

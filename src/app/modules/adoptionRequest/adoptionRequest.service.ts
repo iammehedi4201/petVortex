@@ -8,7 +8,7 @@ const createAdoptionRequestToDB = async (
   user: TJWTPayload,
   payLoad: TPayLoad
 ) => {
-  const { petId, petOwnershipExperience } = payLoad;
+  const { petId, address, city, state, zipCode } = payLoad;
 
   //: check if pet exists
   const pet = await prisma.pet.findUnique({
@@ -26,8 +26,11 @@ const createAdoptionRequestToDB = async (
   const adoptionRequest = await prisma.adoptionRequest.create({
     data: {
       petId,
-      userId: user.id,
-      petOwnershipExperience,
+      userId: user?.id,
+      address: payLoad?.address,
+      city: payLoad?.city,
+      state: payLoad?.state,
+      zipCode: payLoad?.zipCode,
     },
   });
   return adoptionRequest;
@@ -35,7 +38,33 @@ const createAdoptionRequestToDB = async (
 
 //! get Adoption Request
 const getAdoptionRequestFromDB = async () => {
-  const adoptionRequests = await prisma.adoptionRequest.findMany({});
+  const adoptionRequests = await prisma.adoptionRequest.findMany({
+    select: {
+      id: true,
+      createdAt: true,
+      status: true,
+      address: true,
+      user: {
+        select: {
+          name: true,
+          email: true,
+          contactNo: true,
+        },
+      },
+      pet: {
+        select: {
+          name: true,
+          age: true,
+          species: true,
+          PetImages: {
+            select: {
+              url: true,
+            },
+          },
+        },
+      },
+    },
+  });
   return adoptionRequests;
 };
 
@@ -85,6 +114,22 @@ const getAdoptionRequestByUser = async (user: TJWTPayload) => {
   const adoptionRequests = await prisma.adoptionRequest.findMany({
     where: {
       userId: id,
+    },
+    select: {
+      createdAt: true,
+      status: true,
+      pet: {
+        select: {
+          name: true,
+          age: true,
+          species: true,
+          PetImages: {
+            select: {
+              url: true,
+            },
+          },
+        },
+      },
     },
   });
 

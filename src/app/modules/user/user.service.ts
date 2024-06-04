@@ -12,10 +12,14 @@ const getUserProfileFromDB = async (user: TJWTPayload) => {
     where: {
       id,
     },
+
     select: {
       id: true,
       name: true,
       email: true,
+      userName: true,
+      contactNo: true,
+      profilePicture: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -29,6 +33,7 @@ const getUserProfileFromDB = async (user: TJWTPayload) => {
 
 //! Update user profile
 const updateUserProfile = async (user: TJWTPayload, payLoad: Partial<User>) => {
+  console.log("payLoad---------", payLoad);
   const { id } = user;
 
   //:check if user exists

@@ -18,6 +18,8 @@ const createPetToDB = catchAsync(async (req, res) => {
 
 //! Get All Pets
 const getAllPetsFromDB = catchAsync(async (req, res) => {
+  console.log("req.query", req.query);
+
   const filters = pick(req.query, petFilterAbleFields);
   const options = pick(req.query, optionsFields);
   const result = await petService.getAllPetsFromDB(filters, options as any);

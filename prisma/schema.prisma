@@ -88,13 +88,16 @@ model Pet {
 
 //! Adoption Request Model
 model AdoptionRequest {
-  id                     String   @id @default(uuid())
-  userId                 String
-  petId                  String
-  status                 Status   @default(PENDING)
-  petOwnershipExperience String
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  petId     String
+  status    Status   @default(PENDING)
+  address   String
+  city      String
+  state     String
+  zipCode   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
   pet  Pet  @relation(fields: [petId], references: [id])

@@ -27,9 +27,9 @@ router.get(
 router.put(
   "/:requestId",
   checkAuth("ADMIN"),
-  ValidateRequest(
-    adoptionRequestValidation.updateAdoptionRequestStatusValidationSchema
-  ),
+  // ValidateRequest(
+  //   adoptionRequestValidation.updateAdoptionRequestStatusValidationSchema
+  // ),
   adoptionRequestController.updateAdoptionRequestStatus
 );
 

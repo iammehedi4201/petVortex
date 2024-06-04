@@ -4,7 +4,10 @@ import z from "zod";
 const CreateAdoptionRequestValidationSchema = z.object({
   body: z.object({
     petId: z.string(),
-    petOwnershipExperience: z.string(),
+    address: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z.string(),
   }),
 });
 

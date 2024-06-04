@@ -5,6 +5,8 @@ import { userService } from "./user.service";
 
 //! Get User Profile
 const getUserProfileFromDB = catchAsync(async (req, res) => {
+  console.log("Hey I am here");
+
   const user = req.user;
   if (!user) {
     throw new AppError("User not found", 404);
@@ -21,11 +23,12 @@ const getUserProfileFromDB = catchAsync(async (req, res) => {
 //! Update User Profile
 const updateUserProfile = catchAsync(async (req, res) => {
   const user = req.user;
-  const { status } = req.body;
   if (!user) {
     throw new AppError("User not found", 404);
   }
-  const result = await userService.updateUserProfile(user, status);
+  console.log("req.body----------------", req.body);
+
+  const result = await userService.updateUserProfile(user, req.body);
   sendResponse(res, {
     success: true,
     statusCode: 200,
